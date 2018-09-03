@@ -7,8 +7,95 @@ OctoberFly aims to make OctoberCMS faster by using Swoole extension.
 
 Fork of [LaravelFly](https://github.com/scil/LaravelFly)
 
+## PHP Setup Requirements
+
+1. Install swoole extension
+```pecl install swoole```
+
+Make sure swoole is included in php.ini file.
+```extension=swoole.so```
+
+Also Suggested:
+```pecl install inotify```
+
+2. `composer require "tamerhassan/laravel-fly":"dev-master"`
+
+## Quick Start
+
+1. Add the following line to your 'providers' array in `config/app.php`
+```
+'LaravelFly\Providers\ServiceProvider',
+```
+
+2. Publish server config
+```
+php artisan vendor:publish --tag=fly-server
+```
+
+3. Publish app config 
+```
+php artisan vendor:publish --tag=fly-app
+```
+
+4. Edit `vendor/october/rain/src/Foundation/Http/Kernel.php` so that it begins like this:
+```
+<?php namespace October\Rain\Foundation\Http;
+
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
+if (defined('LARAVELFLY_MODE')) {
+    if (LARAVELFLY_MODE == 'Map') {
+        class WhichKernel extends \LaravelFly\Map\Kernel { }
+    }elseif (LARAVELFLY_MODE == 'Backup') {
+        class WhichKernel extends \LaravelFly\Backup\Kernel { }
+    } elseif (LARAVELFLY_MODE == 'FpmLike') {
+        class WhichKernel extends HttpKernel{}
+    }
+} else {
+    class WhichKernel extends HttpKernel
+    {
+        /**
+         * The bootstrap classes for the application.
+         *
+         * @var array
+         */
+       protected $bootstrappers = [
+           '\October\Rain\Foundation\Bootstrap\RegisterClassLoader',
+           '\October\Rain\Foundation\Bootstrap\LoadEnvironmentVariables',
+           '\October\Rain\Foundation\Bootstrap\LoadConfiguration',
+           '\October\Rain\Foundation\Bootstrap\LoadTranslation',
+           \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+           \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+           '\October\Rain\Foundation\Bootstrap\RegisterOctober',
+           \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+           \Illuminate\Foundation\Bootstrap\BootProviders::class,
+       ];
+    }
+}
+
+class Kernel extends WhichKernel
+//class Kernel extends HttpKernel
+{
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
+    ];
+...
+```
+
+5. Finally you can start the server:
+```
+php vendor/scil/laravel-fly/bin/fly start
+```
+
 ---
-From LaravelFly Readme:
+
+# LaravelFly Original Readme:
+---
 
 LaravelFly speeds up our existing Laravel projects without data pollution and memory leak, and make Tinker to be used online (use tinker while Laravel is responding requests from browsers).
 
