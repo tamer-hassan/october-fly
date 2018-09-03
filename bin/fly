@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+
+//// another style which uses Command instead of $argv:
+//      include __DIR__ . '/../../../../vendor/autoload.php';
+//      (new \LaravelFly\Command())->exe(); return;
+
+if ($argc == 1) {
+    $msg = <<<U
+USAGE:  laravelfly-server [ACTION] [CONFIG_FILE]
+    ACTION: start|stop|reload|restart
+    CONFIG_FILE: optional, default is <project_root>/fly.conf.php. 
+    <project_root> is the root of the project which LaravelFly is installed.
+
+U;
+    die($msg);
+}
+
+$basePath = realpath(__DIR__ . '/../../../..');
+$config_file = $argc == 3 ? $argv[2] : $basePath . '/fly.conf.php';
+
+try {
+    if (!is_file($config_file)) {
+        $config_file = __DIR__ . '/../config/laravelfly-server-config.example.php';
+    }
+    $options = require $config_file;
+    $options['conf'] = $config_file;
+} catch (Exception $e) {
+    exit("config file not be loaded: $config_file");
+}
+
+if ($options['echo_level'] ?? 0 >= 3)
+    echo "[INFO] conf: $config_file\n";
+
+if ($argv[1] == 'start') {
+    goto start;
+}
+
+if (!isset($options['pid_file'])) {
+    $pid_file = $basePath . '/bootstrap/laravel-fly-' . $options['listen_port'] . '.pid';
+} else {
+    $pid_file = $options['pid_file'] . '-' . $options['listen_port'];
+}
+
+$pid = 0;
+try {
+    if (is_file($pid_file))
+        $pid = (int)file_get_contents($pid_file);
+} catch (Throwable $e) {
+    print("pid can not be read from $pid_file \n");
+}
+
+if (!$pid && $argv[1] != 'stop') {
+    goto start;
+}
+
+switch ($argv[1]) {
+    case 'stop':
+        posix_kill($pid, SIGTERM);
+        break;
+    case 'reload':
+        posix_kill($pid, SIGUSR1);
+        break;
+    case 'restart':
+        posix_kill($pid, SIGTERM);
+        goto start;
+        break;
+}
+
+
+exit();
+
+start:
+include $basePath . '/vendor/autoload.php';
+
+// prevent errors if eval(tinker()); left in project code
+if (empty($options['tinker']) && !function_exists('tinker')) {
+    function tinker()
+    {
+    }
+}
+
+unset($basePath, $config_file, $pid_file, $pid);
+\LaravelFly\Fly::getServer($options)->start();
+

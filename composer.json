@@ -1,0 +1,59 @@
+{
+  "name": "tamerhassan/october-fly",
+  "description": "Make OctoberCMS faster by using swoole extension.",
+  "type": "library",
+  "keywords": [
+    "swoole",
+    "OctoberCMS"
+  ],
+  "homepage": "http://www.github.com/tamer-hassan/october-fly",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "scil",
+      "email": "scil.zc@gmail.com"
+    },
+    {
+        "name": "Tamer Hassan",
+        "email": "tam.hassan7@gmail.com"
+    }
+
+  ],
+  "require": {
+    "laravel/framework": "5.5.*",
+    "hhxsv5/laravel-s": "~2.0",
+    "ext-swoole": ">=4.0.0"
+  },
+  "suggest": {
+    "ext-inotify": ">=2.0.0"
+  },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master",
+    "nunomaduro/collision": "^2.0",
+    "phpunit/phpunit": "^7.0",
+    "mockery/mockery": "^1.0",
+    "orchestra/testbench-core": "^3.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaravelFly\\": "src/LaravelFly/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelFly\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelFly\\Providers\\ServiceProvider"
+      ],
+      "aliases": {
+      },
+      "dont-discover": [
+        "hhxsv5/laravel-s"
+      ]
+    }
+  }
+}
