@@ -18,7 +18,7 @@ Make sure swoole is included in php.ini file.
 Also Suggested:
 ```pecl install inotify```
 
-2. `composer require "tamerhassan/laravel-fly":"dev-master"`
+2. `composer require "tamerhassan/october-fly":"dev-master"`
 
 ## Quick Start
 
