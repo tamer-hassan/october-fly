@@ -1,25 +1,13 @@
 <?php
 /**
- * thie file is used only when \App\Http\Kernel not edited.
+ * thie file is used only when /bootstrap/app.php is not edited.
  */
 
 namespace LaravelFly;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE === 'Map') {
-        class WhichKernel extends \LaravelFly\Map\Kernel{}
-    } elseif (LARAVELFLY_MODE === 'Backup') {
-        class WhichKernel extends \LaravelFly\Backup\Kernel{}
-    } elseif (LARAVELFLY_MODE === 'FpmLike') {
-        class WhichKernel extends HttpKernel{}
-    }
-} else {
-    class WhichKernel extends HttpKernel{}
-}
-
-class Kernel extends WhichKernel
+class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.

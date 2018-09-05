@@ -67,10 +67,6 @@ class Common
             'Config/Repository.php' =>
                 '/vendor/october/rain/src/Config/Repository.php'
 
-        ],
-        'kernel' => [
-            'Http/Kernel.php' =>
-                '/vendor/october/rain/src/Foundation/Http/Kernel.php'
         ]
     ];
 
@@ -172,20 +168,16 @@ class Common
             $this->echo("Mode in config file not valid, no appClass $appClass\n", 'WARN', true);
         }
 
-        $kernelClass = $options['kernel'] ?? 'October\Rain\Foundation\Http\Kernel';
-        if (!(
-            (LARAVELFLY_MODE === 'Backup' && is_subclass_of($kernelClass, \LaravelFly\Backup\Kernel::class)) ||
-            (LARAVELFLY_MODE === 'Map' && is_subclass_of($kernelClass, \LaravelFly\Map\Kernel::class))
-        )) {
-
-            $kernelClass = \LaravelFly\Kernel::class;
-            $this->echo(
-                "LaravelFly default kernel used: $kernelClass,
-      please edit App/Http/Kernel like https://github.com/scil/LaravelFly/blob/master/doc/config.md",
-                'WARN', true
-            );
+        if (LARAVELFLY_MODE === 'Backup') {
+            $this->kernelClass = \LaravelFly\Backup\Kernel::class;
+        } elseif (LARAVELFLY_MODE === 'Map') {
+            $this->kernelClass = \LaravelFly\Map\Kernel::class;
+        } else {
+            $this->kernelClass = \LaravelFly\Kernel::class;
+            $this->echo("OctoberFly default kernel used: $kernelClass,\n".
+                        "please edit bootstrap/app.php as in the documentation.",
+                        'WARN', true);
         }
-        $this->kernelClass = $kernelClass;
 
         $this->prepareTinker($options);
 

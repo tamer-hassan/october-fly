@@ -117,6 +117,17 @@ const LARAVELFLY_SERVICES = [
 
 ];
 
+
+
+$kernel = '\LaravelFly\Kernel';
+if (defined('LARAVELFLY_MODE')) {
+    if (LARAVELFLY_MODE == 'Map') {
+        $kernel = '\LaravelFly\Map\Kernel';
+    }elseif (LARAVELFLY_MODE == 'Backup') {
+        $kernel = '\LaravelFly\Backup\Kernel';
+    }
+}
+
 /**
  * this array is used for swoole server,
  * see more option list at :
@@ -289,7 +300,7 @@ return [
      *
      * 0, 1 or false to disable it
      */
-    'log_cache' => 5,
+    'log_cache' => 0,
 
 
     /**
@@ -362,17 +373,7 @@ return [
      */
     //'pid_file' => '/run/laravelfly/pid',
 
-
     /**
-     *
-     * Tip One:
-     * make sure this kernel class extends \LaravelFly\Backup\Kernel or
-     * \LaravelFly\Map\Kernel, otherwise \LaravelFly\Kernel::class is used.
-     *
-     * A simple way it to edit app/Http/Kernel.php like the guide in
-     * https://github.com/scil/LaravelFly/blob/master/doc/config.md
-     *
-     * Tip Two:
      * Usually, the properties of this kernel are
      *  ["middleware", "middlewareGroups", "routeMiddleware", "app", "router", "bootstrappers", "middlewarePriority"]
      * If new properties are added by you, please ensure the new ones are safe, that is , keep same in different requests.
@@ -387,6 +388,5 @@ return [
      *      to your Kernel class and make some changes like vendor/scil/laravel-fly/src/Http/Kernel.php
      *
      */
-    'kernel' => '\October\Rain\Foundation\Http\Kernel',
-
+    'kernel' => $kernel,
 ];

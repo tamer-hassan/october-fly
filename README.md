@@ -1,3 +1,5 @@
+# OctoberFly
+---
 OctoberFly aims to make OctoberCMS faster by using Swoole extension.
 
 ## Version Compatibility
@@ -18,7 +20,7 @@ Make sure swoole is included in php.ini file.
 Also Suggested:
 ```pecl install inotify```
 
-2. `composer require "tamerhassan/october-fly":"dev-master"`
+2. `composer require "tamerhassan/october-fly":"0.0.2"`
 
 ## Quick Start
 
@@ -32,64 +34,41 @@ Also Suggested:
 php artisan vendor:publish --tag=fly-server
 ```
 
-3. Publish app config 
+3. Publish app config
 ```
 php artisan vendor:publish --tag=fly-app
 ```
 
-4. Edit `vendor/october/rain/src/Foundation/Http/Kernel.php` so that it begins like this:
+4. Edit `bootstrap/app.php`
+find:
 ```
-<?php namespace October\Rain\Foundation\Http;
-
-use Illuminate\Foundation\Http\Kernel as HttpKernel;
-
+$app->singleton(
+    'Illuminate\Contracts\Http\Kernel',
+    'October\Rain\Foundation\Http\Kernel'
+);
+```
+replace with:
+```
+$kernel = 'October\Rain\Foundation\Http\Kernel';
 if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Map') {
-        class WhichKernel extends \LaravelFly\Map\Kernel { }
+        $kernel = '\LaravelFly\Map\Kernel';
     }elseif (LARAVELFLY_MODE == 'Backup') {
-        class WhichKernel extends \LaravelFly\Backup\Kernel { }
+        $kernel = '\LaravelFly\Backup\Kernel';
     } elseif (LARAVELFLY_MODE == 'FpmLike') {
-        class WhichKernel extends HttpKernel{}
-    }
-} else {
-    class WhichKernel extends HttpKernel
-    {
-        /**
-         * The bootstrap classes for the application.
-         *
-         * @var array
-         */
-       protected $bootstrappers = [
-           '\October\Rain\Foundation\Bootstrap\RegisterClassLoader',
-           '\October\Rain\Foundation\Bootstrap\LoadEnvironmentVariables',
-           '\October\Rain\Foundation\Bootstrap\LoadConfiguration',
-           '\October\Rain\Foundation\Bootstrap\LoadTranslation',
-           \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-           \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-           '\October\Rain\Foundation\Bootstrap\RegisterOctober',
-           \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-           \Illuminate\Foundation\Bootstrap\BootProviders::class,
-       ];
+        $kernel = '\LaravelFly\Kernel';
     }
 }
 
-class Kernel extends WhichKernel
-//class Kernel extends HttpKernel
-{
-    /**
-     * The application's global HTTP middleware stack.
-     *
-     * @var array
-     */
-    protected $middleware = [
-        'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
-    ];
-...
+$app->singleton(
+    'Illuminate\Contracts\Http\Kernel',
+    $kernel
+);
 ```
 
 5. Finally you can start the server:
 ```
-php vendor/scil/laravel-fly/bin/fly start
+php vendor/tamerhassan/october-fly/bin/fly start
 ```
 
 ---
