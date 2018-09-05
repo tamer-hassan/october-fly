@@ -1,5 +1,5 @@
 # OctoberFly
----
+
 OctoberFly aims to make OctoberCMS faster by using Swoole extension.
 
 ## Version Compatibility
@@ -39,34 +39,7 @@ php artisan vendor:publish --tag=fly-server
 php artisan vendor:publish --tag=fly-app
 ```
 
-4. Edit `bootstrap/app.php`
-find:
-```
-$app->singleton(
-    'Illuminate\Contracts\Http\Kernel',
-    'October\Rain\Foundation\Http\Kernel'
-);
-```
-replace with:
-```
-$kernel = 'October\Rain\Foundation\Http\Kernel';
-if (defined('LARAVELFLY_MODE')) {
-    if (LARAVELFLY_MODE == 'Map') {
-        $kernel = '\LaravelFly\Map\Kernel';
-    }elseif (LARAVELFLY_MODE == 'Backup') {
-        $kernel = '\LaravelFly\Backup\Kernel';
-    } elseif (LARAVELFLY_MODE == 'FpmLike') {
-        $kernel = '\LaravelFly\Kernel';
-    }
-}
-
-$app->singleton(
-    'Illuminate\Contracts\Http\Kernel',
-    $kernel
-);
-```
-
-5. Finally you can start the server:
+4. Finally you can start the server:
 ```
 php vendor/tamerhassan/october-fly/bin/fly start
 ```
