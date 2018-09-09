@@ -10,23 +10,23 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "scil",
-      "email": "scil.zc@gmail.com"
-    },
-    {
         "name": "Tamer Hassan",
         "email": "tam.hassan7@gmail.com"
+    },
+    {
+      "name": "scil",
+      "email": "scil.zc@gmail.com"
     }
-
   ],
   "require": {
-    "october/rain": "~1.0",
-    "october/system": "~1.0",
-    "october/backend": "~1.0",
-    "october/cms": "~1.0",
+    "october/rain": "dev-develop as 1.0.x-dev",
+    "october/system": "dev-develop",
+    "october/backend": "dev-develop",
+    "october/cms": "dev-develop",
     "laravel/framework": "5.5.*",
     "hhxsv5/laravel-s": "~2.0",
-    "ext-swoole": ">=4.0.0"
+    "ext-swoole": ">=4.0.0",
+    "scil/laravel-fly": "dev-master"
   },
   "suggest": {
     "ext-inotify": ">=2.0.0"
@@ -40,23 +40,23 @@
   },
   "autoload": {
     "psr-4": {
-      "LaravelFly\\": "src/LaravelFly/"
+      "OctoberFly\\": "src/OctoberFly/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "LaravelFly\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "LaravelFly\\Providers\\ServiceProvider"
+        "OctoberFly\\Providers\\ServiceProvider"
       ],
       "aliases": {
       },
       "dont-discover": [
-        "hhxsv5/laravel-s"
+        "hhxsv5/laravel-s",
+        "scil/laravel-fly"
       ]
     }
   }

@@ -1338,8 +1338,7 @@ class Application extends \Illuminate\Container\Container implements Application
      */
     public function setExecutionContext($context)
     {
-        // $this->executionContext = $context;
-        $this->executionContext = 'back-end';
+        $this->executionContext = $context;
     }
 
     /**

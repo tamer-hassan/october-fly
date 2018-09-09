@@ -119,12 +119,13 @@ const LARAVELFLY_SERVICES = [
 
 
 
-$kernel = '\LaravelFly\Kernel';
+$kernel = '\OctoberFly\Kernel';
+
 if (defined('LARAVELFLY_MODE')) {
     if (LARAVELFLY_MODE == 'Map') {
-        $kernel = '\LaravelFly\Map\Kernel';
+        $kernel = '\OctoberFly\Map\Kernel';
     }elseif (LARAVELFLY_MODE == 'Backup') {
-        $kernel = '\LaravelFly\Backup\Kernel';
+        $kernel = '\OctoberFly\Backup\Kernel';
     }
 }
 
@@ -144,7 +145,7 @@ return [
      *
      * when LARAVELFLY_MODE == 'FpmLike', this is ignored and \LaravelFly\Server\FpmHttpServer::class is used.
      */
-    'server' => \LaravelFly\Server\HttpServer::class,
+    'server' => \OctoberFly\Server\HttpServer::class,
 
     /**
      * true if you use eval(tinker())

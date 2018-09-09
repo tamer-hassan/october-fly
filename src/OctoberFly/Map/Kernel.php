@@ -1,14 +1,8 @@
 <?php
-/**
- * Dict
- * plus
- * gatherRouteTerminateMiddleware // search 'hack' in this file
- */
 
 namespace OctoberFly\Map;
 
 use Exception;
-use Illuminate\Routing\Router;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Foundation\Http\Events;
@@ -17,9 +11,6 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-    use \LaravelFly\Map\Util\Dict;
-    protected static $normalAttriForObj = [];
-    protected static $arrayAttriForObj = ['middleware'];
 
     /**
      * The application implementation.
@@ -112,43 +103,6 @@ class Kernel extends HttpKernel
     ];
 
 
-    /*  coroutine start. This part only for coroutine */
-
-    public function __construct(\Illuminate\Contracts\Foundation\Application $app, Router $router)
-    {
-        parent::__construct($app, $router);
-
-        $this->initOnWorker(true);
-
-        static::$corDict[WORKER_COROUTINE_ID]['middleware'] = $this->middleware;
-    }
-
-    public function hasMiddleware($middleware)
-    {
-        return in_array($middleware, static::$corDict[\Co::getUid()]['middleware']);
-    }
-
-    public function prependMiddleware($middleware)
-    {
-        if (array_search($middleware, static::$corDict[\Co::getUid()]['middleware']) === false) {
-            array_unshift(static::$corDict[\Co::getUid()]['middleware'], $middleware);
-        }
-
-        return $this;
-    }
-
-    public function pushMiddleware($middleware)
-    {
-        if (array_search($middleware, static::$corDict[\Co::getUid()]['middleware']) === false) {
-            static::$corDict[\Co::getUid()]['middleware'][] = $middleware;
-        }
-
-        return $this;
-    }
-
-    /*  coroutine END */
-
-
     public function handle($request)
     {
         try {
@@ -187,11 +141,45 @@ class Kernel extends HttpKernel
 
         return (new Pipeline($this->app))
             ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : static::$corDict[\Co::getUid()]['middleware'])
+            // hack: Cache for kernel middlewares objects.
+            // ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->getParsedKernelMiddlewares())
             ->then($this->dispatchToRouter());
     }
 
-    //hack
+    /**
+     * hack: Cache for kernel middlewares objects.
+     * middlewars are frozened when the first request goes into Pipeline
+     * @var array
+     */
+    static $parsedKernelMiddlewares = [];
+
+    /**
+     * hack: Cache for terminateMiddleware objects.
+     * only kernel middlewares here
+     * @var array
+     */
+    static $parsedTerminateMiddlewares = [];
+
+    /**
+     * @return array
+     * hack: Cache for kernel middlewares objects.
+     * hack: Cache for terminateMiddleware objects.
+     */
+    protected function getParsedKernelMiddlewares(): array
+    {
+        return static::$parsedKernelMiddlewares ?:
+            (static::$parsedKernelMiddlewares = $this->app->parseKernelMiddlewares($this->middleware, static::$parsedTerminateMiddlewares));
+    }
+
+    /**
+     * hack: Cache for terminateMiddleware objects.
+     * including kernel middlewares and route middlewares
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Response $response
+     * @return void
+     */
     protected function terminateMiddleware($request, $response)
     {
         $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
@@ -200,8 +188,7 @@ class Kernel extends HttpKernel
             $this->app->gatherRouteTerminateMiddleware($request),
 
             // $this->middleware
-            // no cache for kernel middlewares when !LARAVELFLY_SERVICES['kernel'], it's different from src/OctoberFly/Map/Kernel.php
-            static::$corDict[\Co::getUid()]['middleware']
+            static::$parsedTerminateMiddlewares
         );
 
         foreach ($middlewares as $middleware) {

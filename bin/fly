@@ -3,14 +3,14 @@
 
 //// another style which uses Command instead of $argv:
 //      include __DIR__ . '/../../../../vendor/autoload.php';
-//      (new \LaravelFly\Command())->exe(); return;
+//      (new \OctoberFly\Command())->exe(); return;
 
 if ($argc == 1) {
     $msg = <<<U
-USAGE:  laravelfly-server [ACTION] [CONFIG_FILE]
+USAGE:  octoberfly-server [ACTION] [CONFIG_FILE]
     ACTION: start|stop|reload|restart
-    CONFIG_FILE: optional, default is <project_root>/fly.conf.php. 
-    <project_root> is the root of the project which LaravelFly is installed.
+    CONFIG_FILE: optional, default is <project_root>/fly.conf.php.
+    <project_root> is the root of the project which OctoberFly is installed.
 
 U;
     die($msg);
@@ -81,5 +81,4 @@ if (empty($options['tinker']) && !function_exists('tinker')) {
 }
 
 unset($basePath, $config_file, $pid_file, $pid);
-\LaravelFly\Fly::getServer($options)->start();
-
+\OctoberFly\Fly::getServer($options)->start();
