@@ -7,7 +7,7 @@ OctoberFly aims to make OctoberCMS faster by using Swoole extension.
 - OctoberCMS (Laravel 5.5.* under the hood)
 - Swoole >4.0
 
-Fork of [LaravelFly](https://github.com/scil/LaravelFly)
+Based on: [LaravelFly](https://github.com/scil/LaravelFly)
 
 ## PHP Setup Requirements
 
