@@ -18,6 +18,7 @@ Make sure swoole is included in php.ini file.
 ```extension=swoole.so```
 
 Also Suggested:
+
 ```pecl install inotify```
 
 2. `composer require "tamerhassan/october-fly":"0.0.3"`
@@ -26,7 +27,7 @@ Also Suggested:
 
 1. Add the following line to your 'providers' array in `config/app.php`
 ```
-'LaravelFly\Providers\ServiceProvider',
+'OctoberFly\Providers\ServiceProvider',
 ```
 
 2. Publish server config
