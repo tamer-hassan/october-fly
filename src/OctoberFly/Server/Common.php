@@ -52,12 +52,22 @@ class Common
         'Facade.php' =>
             '/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php',
 
-        // otherwise on each boot of PaginationServiceProvider and NotificationServiceProvider,view paths would be appended to app('view')->finder->hints
-        // by  $this->loadViewsFrom forever
+        /**
+         * otherwise
+         * on each boot of PaginationServiceProvider and NotificationServiceProvider,
+         * view paths would be appended to app('view')->finder->hints by  $this->loadViewsFrom again and again
+        */
         'FileViewFinder' . (LARAVELFLY_SERVICES['view.finder'] ? 'SameView' : '') . '.php' =>
             '/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php',
 
     ];
+    /**
+     * fly files included conditionally.
+     * this array is only for
+     * test tests/Map/Feature/FlyFilesTest.php
+     *
+     * @var array
+     */
     protected static $conditionFlyFiles = [
         'log_cache' => [
             'StreamHandler.php' =>
@@ -69,7 +79,7 @@ class Common
 
         ],
         'kernel' => [
-            'Kernel.php' =>
+            'Http/Kernel.php' =>
                 '/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php'
         ]
     ];
@@ -188,33 +198,11 @@ class Common
         $this->dispatchRequestByQuery($options);
     }
 
-    static function getApplicationVersion($full = false, $laravelProjectRoot = null): ?string
-    {
-        if (static::$laravelMainVersion) return static::$laravelMainVersion;
-
-        $laravelProjectRoot = $laravelProjectRoot ?: realpath(__DIR__ .
-            '/../../../../../..');
-        $file = $laravelProjectRoot. '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php';
-
-        if (!is_file($file)) return null;
-
-        if (preg_match("/const VERSION = '(\d+)\.(\d+)\.(\d+)';/", file_get_contents($file), $r)) {
-            static::$laravelMainVersion = "$r[1].$r[2]";
-            return $full ? "$r[1].$r[2].$r[3]" : "$r[1].$r[2]";
-        }
-        return null;
-    }
-
     static function includeFlyFiles(&$options)
     {
 	    if (LARAVELFLY_MODE === 'FpmLike') return;
 
-        $v = static::getApplicationVersion();
-
-        $flyBaseDir = __DIR__ . '/../../../../../scil/laravel-fly/src/fly/' . $v . '/';
-
-        if (!is_dir($flyBaseDir))
-            die("[ERROR] refactor not made for current Laravel version $v.\n");
+        $flyBaseDir = __DIR__ . '/../../../../../scil/laravel-fly-files/src/';
 
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
         if (empty(LARAVELFLY_SERVICES['config']))
@@ -227,12 +215,14 @@ class Common
 
             $mapLoaded = true;
 
-            if (empty(LARAVELFLY_SERVICES['kernel']))
-                include_once __DIR__ . '/../../fly/Kernel.php';
+            if (empty(LARAVELFLY_SERVICES['kernel'])) {
+                $localFlyBaseDir = __DIR__ . '/../../fly/';
+                include_once $localFlyBaseDir . 'Kernel.php';
+            }
 
             foreach (static::mapFlyFiles as $f => $offical) {
                 if ($f === 'Application.php') {
-                    require __DIR__ . '/../../fly/'.$v.'/Application.php';
+                    require __DIR__ . '/../../fly/Application.php';
                 } else {
                     require $flyBaseDir . $f;
                 }
@@ -247,12 +237,7 @@ class Common
         if (is_int($options['log_cache']) && $options['log_cache'] > 1) {
 
             foreach (static::$conditionFlyFiles['log_cache'] as $f => $offical) {
-                if ($f === 'Kernel.php') {
-                    require __DIR__ . '/../../fly/Kernel.php';
-                } else {
                     require $flyBaseDir . $f;
-                }
-
             }
 
         } else {
@@ -333,16 +318,6 @@ class Common
     public function getDispatcher(): EventDispatcher
     {
         return $this->dispatcher;
-    }
-
-    static function getAllFlyMap()
-    {
-        $r = static::mapFlyFiles;
-
-        foreach (static::$conditionFlyFiles as $map) {
-            $r = array_merge($r, $map);
-        }
-        return $r;
     }
 
     public function getSwooleServer(): \swoole_server
