@@ -53,7 +53,7 @@ const LARAVELFLY_SERVICES = [
      *
      * Most cases, these values init with data from config('session') and keep same across the whole project.
      */
-    'cookie' => false,
+    'cookie' => true,
 
     /**
      * you can set true if prop customCreators with same name keep same.
@@ -82,7 +82,7 @@ const LARAVELFLY_SERVICES = [
      *      view 'home' may points to 'guest_location/home.blade.php' for a guest ,
      *      while to 'admin_location/home.blade.php' for an admin
      */
-    'view.finder' => false,
+    'view.finder' => true,
 
     /**
      * set true if items in app('config') keep same in different requests,
@@ -95,7 +95,7 @@ const LARAVELFLY_SERVICES = [
      * restore its origin value to allow Debugbar continue work in other requests.
      *
      */
-    'config' => false,
+    'config' => true,
 
     /**
      * set true if middlewares keep same in all requests.
@@ -113,7 +113,7 @@ const LARAVELFLY_SERVICES = [
      *
      *
      */
-    'kernel' => false,
+    'kernel' => true,
 
 ];
 
