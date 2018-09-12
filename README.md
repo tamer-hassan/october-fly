@@ -21,7 +21,7 @@ Also Suggested:
 
 ```pecl install inotify```
 
-2. `composer require "tamerhassan/october-fly":"0.0.3"`
+2. `composer require "tamerhassan/october-fly":"dev-master"`
 
 ## Quick Start
 
