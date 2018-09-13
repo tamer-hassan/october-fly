@@ -85,19 +85,6 @@ const LARAVELFLY_SERVICES = [
     'view.finder' => true,
 
     /**
-     * set true if items in app('config') keep same in different requests,
-     * othersize leave it false because
-     * for Mode Backup, it's necessary to restore its origin value after each request.
-     * for Mode Map, it's necessary to convert Illuminate\Config\Repository friendly to coroutine.
-     *
-     * In most cases, it's not necessary to set it false. Except for old versions of Debugbar
-     * which changes 'debugbar.enabled' from true to false after its booting, so it's necessary to
-     * restore its origin value to allow Debugbar continue work in other requests.
-     *
-     */
-    'config' => true,
-
-    /**
      * set true if middlewares keep same in all requests.
      *
      * Middlewares may be changed by Kernel::middleware
@@ -217,10 +204,8 @@ return [
      * A solution is to watch a file like `/home/vagrant/.watch`, and modify it when your codes change.
      */
     'watch' => [
-//        __DIR__.'/app',
 //        __DIR__.'/config',
-//        __DIR__.'/resources/views',
-//        __DIR__.'/routes/web.php',
+//        __DIR__.'/plugins',
     ],
     /**
      * how long after code changes the server hot reload
@@ -390,4 +375,11 @@ return [
      *
      */
     'kernel' => $kernel,
+
+    /**
+    * If your project uses an application which replaces Laravel official application, like OctoberCms,
+    * you can refactor it and write the new one here.
+    */
+    'application' => '\OctoberFly\\' . LARAVELFLY_MODE . '\Application',
+
 ];

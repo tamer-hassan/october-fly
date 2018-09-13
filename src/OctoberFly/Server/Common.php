@@ -205,8 +205,7 @@ class Common
         $flyBaseDir = __DIR__ . '/../../../../../scil/laravel-fly-files/src/';
 
         // all fly files are for Mode Map, except Config/SimpleRepository.php for Mode Backup
-        if (empty(LARAVELFLY_SERVICES['config']))
-            include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
+        include_once $flyBaseDir . 'Config/' . (LARAVELFLY_MODE === 'Map' ? '' : 'Backup') . 'Repository.php';
 
         static $mapLoaded = false;
         static $logLoaded = false;
