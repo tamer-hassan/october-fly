@@ -57,7 +57,7 @@ class Application extends \October\Rain\Foundation\Application
     /**
      * @var array[]
      */
-    protected $updateForClone = [];
+    protected $updateOnRequest = [];
 
     protected static $arrayAttriForObj = ['resolved', 'bindings', 'methodBindings', 'instances', 'aliases', 'abstractAliases', 'extenders', 'tags', 'contextual', 'reboundCallbacks', 'globalResolvingCallbacks', 'globalAfterResolvingCallbacks', 'resolvingCallbacks', 'afterResolvingCallbacks',
 
@@ -136,8 +136,8 @@ class Application extends \October\Rain\Foundation\Application
         foreach ($this->cloneServices as $service) {
             $this->instance($service, clone $this->make($service));
         }
-        foreach ($this->updateForClone as $item) {
-            $item['closure']->call($this->make($item['this']));
+        foreach ($this->updateOnRequest as $item) {
+            $item['closure']->call(empty($item['this']) ? null : $this->make($item['this']));
         }
     }
 
@@ -172,7 +172,7 @@ class Application extends \October\Rain\Foundation\Application
     {
         $this->cloneServices = $services;
 
-        $this->updateForClone = $update;
+        $this->updateOnRequest = $update;
     }
 
     public function registerAcrossProviders()
