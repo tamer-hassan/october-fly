@@ -127,9 +127,17 @@ return [
      */
     'providers_on_worker' => [
 
-        // this is not in config('app.providers') and registered in Application:;registerBaseServiceProviders
+        // this is not in config('app.providers') but registered in Application::registerBaseServiceProviders
         October\Rain\Foundation\Providers\LogServiceProvider::class => [
             'log' => true,
+        ],
+
+        // this is not in config('app.providers') but registered in Application::registerBaseServiceProviders
+        Illuminate\Routing\RoutingServiceProvider::class => [
+            'router' => true,
+            'url' => 'clone',
+            // todo
+            'redirect' => false,
         ],
 
         // Illuminate\Auth\AuthServiceProvider::class => [
@@ -302,7 +310,7 @@ return [
         LaravelFly\Providers\RouteServiceProvider::class => [],
     ],
 
-    'Facade_clean_on_work' => [
+    'clean_Facade_on_work' => [
          // a facke request instance made on work
         'request',
         //'url' has been made on work? when? \Illuminate\Routing\RoutingServiceProvider
