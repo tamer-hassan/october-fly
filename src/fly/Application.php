@@ -1342,6 +1342,17 @@ class Application extends \Illuminate\Container\Container implements Application
     }
 
     /**
+     * Determine if we are running in Swoole http server.
+     *
+     * @return bool
+     */
+     public function serverIsSwoole()
+     {
+         // It's a paradox: not runningInConsole but SAPI is CLI! That's Swoole http server.
+         return ($this->runningInConsole() == false) && (php_sapi_name() == 'cli');
+     }
+
+    /**
      * Returns true if a database connection is present.
      * @return boolean
      */
