@@ -302,6 +302,13 @@ return [
         LaravelFly\Providers\RouteServiceProvider::class => [],
     ],
 
+    'Facade_clean_on_work' => [
+         // a facke request instance made on work
+        'request',
+        //'url' has been made on work? when? \Illuminate\Routing\RoutingServiceProvider
+        'url',
+     ],
+
     /**
      * handle relations about cloned objects to avoid Stale Reference. For Mode Map
      *
