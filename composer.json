@@ -20,9 +20,8 @@
     "october/backend": "~1.0",
     "october/cms": "~1.0",
     "laravel/framework": "5.5.*",
-    "hhxsv5/laravel-s": "~2.0",
     "ext-swoole": ">=4.0.0",
-    "scil/laravel-fly": "dev-master"
+    "scil/laravel-fly": "v0.8"
   },
   "suggest": {
     "ext-inotify": ">=2.0.0"
