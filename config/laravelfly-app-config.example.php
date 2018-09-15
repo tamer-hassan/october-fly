@@ -338,11 +338,18 @@ return [
         //         },
         //     ],
 
-        // put one more updating item here
         [
-            // 'this' => 'name',   // 'this' is optional, and userful when closure is accessing protected props
-            // 'closure' => function () { },
-        ]
+            'this' => 'db',
+            'closure' => function () {
+                \October\Rain\Database\MemoryCache::instance()->flush();
+            },
+        ],
+
+        // put one more updating item here
+        // [
+        //     'this' => 'name',   // 'this' is optional, and userful when closure is accessing protected props
+        //     'closure' => function () { },
+        // ],
     ],
 
     /**
